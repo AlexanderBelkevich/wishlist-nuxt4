@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/ui'],
+  modules: ['@nuxt/eslint', '@nuxt/ui', 'nuxt-auth-utils'],
   devtools: { enabled: true },
   app: {
     head: {
@@ -9,6 +9,12 @@ export default defineNuxtConfig({
     },
   },
   css: ['~/assets/css/main.css'],
+  runtimeConfig: {
+    session: {
+      password: '',
+      maxAge: 60 * 60 * 24 * 7,
+    },
+  },
   compatibilityDate: '2025-07-15',
   eslint: {
     config: { stylistic: true },
