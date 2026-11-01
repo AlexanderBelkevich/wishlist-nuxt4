@@ -8,6 +8,13 @@
       "when": 1793450716316,
       "tag": "0000_friendly_lockjaw",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1793465907697,
+      "tag": "0001_whole_tusk",
+      "breakpoints": true
     }
   ]
 }
