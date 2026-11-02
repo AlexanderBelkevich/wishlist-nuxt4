@@ -4,14 +4,13 @@ useSeoMeta({ title: 'Мои вишлисты' })
 
 const { user } = useUserSession()
 const toast = useToast()
-const { data: wishlists, refresh } = await useFetch('/api/wishlists')
+const { data: wishlists } = await useFetch('/api/wishlists')
 
 const state = reactive({ title: '' })
 async function create() {
   try {
-    await $fetch('/api/wishlists', { method: 'POST', body: state })
-    state.title = ''
-    await refresh()
+    const wishlist = await $fetch('/api/wishlists', { method: 'POST', body: state })
+    await navigateTo(`/lists/${wishlist.id}`)
   }
   catch (error) {
     const message = (error as { data?: { message?: string } }).data?.message
@@ -21,7 +20,7 @@ async function create() {
 </script>
 
 <template>
-  <UContainer>
+  <UContainer class="py-10">
     <h1 class="text-2xl font-semibold">
       Мои вишлисты
     </h1>
@@ -65,7 +64,9 @@ async function create() {
         v-for="wishlist in wishlists"
         :key="wishlist.id"
       >
-        <UCard>{{ wishlist.title }}</UCard>
+        <NuxtLink :to="`/lists/${wishlist.id}`">
+          <UCard class="transition hover:bg-elevated">{{ wishlist.title }}</UCard>
+        </NuxtLink>
       </li>
     </ul>
   </UContainer>
