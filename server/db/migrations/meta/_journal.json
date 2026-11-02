@@ -15,6 +15,13 @@
       "when": 1793465907697,
       "tag": "0001_whole_tusk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793553367652,
+      "tag": "0002_melodic_princess_powerful",
+      "breakpoints": true
     }
   ]
 }
