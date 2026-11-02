@@ -19,6 +19,7 @@ export const wishlists = sqliteTable('wishlists', {
   }),
   userId: integer().notNull().references(() => users.id, { onDelete: 'cascade' }),
   title: text().notNull(),
+  slug: text().notNull().unique(),
   createdAt: createdAt(),
 }, table => [
   index('wishlists_user_id_idx').on(table.userId),
@@ -33,6 +34,7 @@ export const gifts = sqliteTable('gifts', {
   url: text(),
   price: integer(),
   note: text(),
+  reservationToken: text(),
   createdAt: createdAt(),
 }, table => [
   index('gidts_wishlist_id_idx').on(table.wishlistId),

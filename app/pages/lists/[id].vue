@@ -30,13 +30,13 @@ async function deleteWishList() {
     const message = (error as { data?: { message?: string } }).data?.message
     toast.add({ title: message ?? 'Не удалось удалить вишлист', color: 'error' })
   }
+  finally {
+    deleting.value = false
+    deleteOpen.value = false
+  }
 }
 
 type Gift = NonNullable<typeof wishlist.value>['gifts'][number]
-
-function storeName(url: string) {
-  return new URL(url).hostname.replace(/^www\./, '')
-}
 
 const giftFormOpen = ref(false)
 const editedGift = ref<Gift>()
@@ -86,6 +86,16 @@ async function deleteGift() {
     giftToDelete.value = undefined
   }
 }
+
+async function copyPublicLink(slug: string) {
+  try {
+    await navigator.clipboard.writeText(`${location.origin}/w/${slug}`)
+    toast.add({ title: 'Ссылка скопирована', color: 'success' })
+  }
+  catch {
+    toast.add({ title: 'Не удалось скопировать ссылку', color: 'error' })
+  }
+}
 </script>
 
 <template>
@@ -101,10 +111,24 @@ async function deleteGift() {
       variant="link"
       class="mb-4 px-0"
     />
-    <h1 class="text-2xl font-semibold break-words">
+    <h1 class="text-2xl font-semibold break-words mb-4">
       {{ wishlist.title }}
     </h1>
-    <div class="flex gap-2">
+    <div class="flex flex-wrap gap-2">
+      <UButton
+        icon="i-lucide-link"
+        label="Скопировать ссылку"
+        color="neutral"
+        variant="outline"
+        @click="copyPublicLink(wishlist.slug)"
+      />
+      <UButton
+        :to="`/w/${wishlist.slug}`"
+        target="_blank"
+        icon="i-lucide-eye"
+        color="neutral"
+        variant="outline"
+      />
       <UButton
         icon="i-lucide-plus"
         label="Добавить подарок"
@@ -114,7 +138,7 @@ async function deleteGift() {
         icon="i-lucide-trash-2"
         label="Удалить"
         color="error"
-        varian="soft"
+        variant="soft"
         @click="deleteOpen = true"
       />
     </div>
@@ -135,54 +159,29 @@ async function deleteGift() {
         v-for="gift in wishlist.gifts"
         :key="gift.id"
       >
-        <UCard
-          class="h-full"
-          :ui="{ root: 'flex flex-col', body: 'flex flex-1 flex-col gap-2' }"
-        >
-          <p class="font-medium break-words">
-            {{ gift.title }}
-          </p>
-          <p
-            v-if="gift.price"
-            class="text-xl font-bold"
-          >
-            {{ formatPrice(gift.price) }}
-          </p>
-          <p
-            v-if="gift.note"
-            class="text-sm text-muted break-words whitespace-pre-line"
-          >
-            {{ gift.note }}
-          </p>
-          <UButton
-            v-if="gift.url"
-            :to="gift.url"
-            target="_blank"
-            rel="noopener noreferrer"
-            :label="storeName(gift.url)"
-            trailing-icon="i-lucide-external-link"
-            color="neutral"
-            variant="soft"
-            size="sm"
-            class="self-start"
-          />
-          <div class="mt-auto flex justify-end gap-1 pt-2">
+        <GiftCard :gift="gift">
+          <template #actions>
+            <UBadge
+              v-if="gift.reserved"
+              label="Забронирован"
+              color="neutral"
+              variant="subtle"
+            />
             <UButton
               icon="i-lucide-pencil"
               color="neutral"
-              variant="ghost"
-              aria-label="Изменить"
+              varian="ghost"
+              class="ml-auto"
               @click="openGiftForm(gift)"
             />
             <UButton
               icon="i-lucide-trash-2"
               color="error"
-              variant="ghost"
-              aria-label="Удалить"
+              varian="ghost"
               @click="giftToDelete = gift"
             />
-          </div>
-        </UCard>
+          </template>
+        </GiftCard>
       </li>
     </ul>
 
@@ -215,7 +214,6 @@ async function deleteGift() {
       <template #body>
         <GiftForm
           :gift="editedGift"
-          template
           @submit="saveGift"
         />
       </template>
@@ -224,7 +222,7 @@ async function deleteGift() {
     <UModal
       v-model:open="giftDeleteOpen"
       title="Удалить подарок?"
-      :description="`${giftToDelete?.title} удалиться насовсем, отменить это будет нельзя`"
+      :description="`${giftToDelete?.title} удалится насовсем, отменить это будет нельзя`"
       :ui="{ footer: 'justify-end' }"
     >
       <template #footer>

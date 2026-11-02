@@ -1,11 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  gift?: {
-    title: string
-    url: string | null
-    price: number | null
-    note: string | null
-  }
+  gift?: GiftFields
 }>()
 
 const emit = defineEmits<{
@@ -78,7 +73,7 @@ function onSubmit() {
     </UFormField>
     <UFormField
       label="Дополнительная информация"
-      name="url"
+      name="note"
     >
       <UTextarea
         v-model="state.note"

@@ -6,12 +6,12 @@ export const wishlistSchema = z.object({
 
 export const giftSchema = z.object({
   title: z.string().trim().min(1, 'Введите название').max(200, 'Не длиннее 200 символов'),
-  url: z.url({ protocol: /^https?$/ })
+  url: z.url({ protocol: /^https?$/, error: 'Нужна ссылка в виде https://...' })
     .max(2000, 'Слишком длинная ссылка')
     .or(z.literal(''))
     .transform(value => value || null),
   price: z
-    .number('Введие число')
+    .number('Введите число')
     .int('Только целое число')
     .positive('Цена больше нуля')
     .max(10_000_000, 'Слишком большая цена')
@@ -20,7 +20,7 @@ export const giftSchema = z.object({
   note: z
     .string()
     .trim()
-    .max(500, 'Не длиннее 50 символов')
+    .max(500, 'Не длиннее 500 символов')
     .transform(value => value || null),
 })
 
