@@ -15,6 +15,9 @@ export default defineNuxtConfig({
       password: '',
       maxAge: 60 * 60 * 24 * 7,
     },
+    public: {
+      siteUrl: 'http://localhost:3000',
+    },
   },
   compatibilityDate: '2025-07-15',
   eslint: {

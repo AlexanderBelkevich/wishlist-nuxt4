@@ -3,6 +3,7 @@ definePageMeta({ layout: 'guest' })
 
 const route = useRoute()
 const toast = useToast()
+const config = useRuntimeConfig()
 
 const apiUrl = `/api/guest/${route.params.slug}` as const
 
@@ -12,7 +13,15 @@ if (error.value) {
   throw createError({ statusCode: error.value.statusCode, message: 'Вишлист не найден', fatal: true })
 }
 
-useSeoMeta({ title: () => wishlist.value?.title })
+useSeoMeta({
+  title: () => wishlist.value?.title,
+  ogTitle: () => wishlist.value?.title,
+  description: 'Выберите подарок и забронируйте его, чтобы не подарить то же, что и другие',
+  ogDescription: `${wishlist.value?.owner.name} собирает подарки. Выберите подарок и забронируйте его, чтобы не подарить то же, что и другие.`,
+  ogImage: `${config.public.siteUrl}/og.png`,
+  ogSiteName: 'Вишлист',
+  twitterCard: 'summary_large_image',
+  robots: 'noindex, nofollow' })
 
 async function toggleReservation(giftId: number, method: 'POST' | 'DELETE') {
   try {

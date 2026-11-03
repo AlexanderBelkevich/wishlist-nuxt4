@@ -1,5 +1,16 @@
 <script setup lang="ts">
 const { loggedIn } = useUserSession()
+const config = useRuntimeConfig()
+const description = 'Выберите подарок и забронируйте его, чтобы не подарить то же, что и другие'
+
+useSeoMeta({
+  ogTitle: 'Вишлист',
+  description,
+  ogDescription: description,
+  ogImage: `${config.public.siteUrl}/og.png`,
+  ogSiteName: 'Вишлист',
+  twitterCard: 'summary_large_image',
+})
 
 const links = computed(() => [
   loggedIn.value
@@ -11,7 +22,7 @@ const links = computed(() => [
 <template>
   <UPageHero
     title="Вишлист без испорченных сюрпризов"
-    description="Соберите подарки в список и поделитесь ссылкой. Друзья бронируют подарки, а вы не узнаете, кто что выбрал"
+    :description="description"
     :links="links"
   />
 </template>
