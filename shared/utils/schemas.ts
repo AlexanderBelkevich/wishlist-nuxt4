@@ -2,6 +2,9 @@ import { z } from 'zod'
 
 export const wishlistSchema = z.object({
   title: z.string().trim().min(1, 'Введите название').max(100, 'Не длиннее 100 символов'),
+  emoji: z.enum(wishlistEmojis).default('🎁'),
+  color: z.enum(wishlistColors).default('rose'),
+  eventDate: z.union([z.iso.date('Неверная дата'), z.literal('')]).default('').transform(value => value || null),
 })
 
 export const giftSchema = z.object({
@@ -24,4 +27,5 @@ export const giftSchema = z.object({
     .transform(value => value || null),
 })
 
+export type WishlistFormState = z.input<typeof wishlistSchema>
 export type GiftFormState = z.input<typeof giftSchema>

@@ -40,14 +40,18 @@ async function toggleReservation(giftId: number, method: 'POST' | 'DELETE') {
     v-if="wishlist"
     class="py-10"
   >
-    <UUser
-      :name="wishlist.owner.name"
-      description="собирает подарки"
-      :avatar="{ src: wishlist.owner.avatarUrl, alt: wishlist.owner.name }"
-    />
-    <h1 class="mt-4 text-2xl font-semibold break-words">
-      {{ wishlist.title }}
-    </h1>
+    <WishlistHero :wishlist="wishlist">
+      <template #top>
+        <UUser
+          :name="wishlist.owner.name"
+          description="собирает подарки"
+          :avatar="{ src: wishlist.owner.avatarUrl, alt: wishlist.owner.name }"
+          :ui="{ name: 'text-white', description: 'text-white/80' }"
+          class="mb-4"
+        />
+      </template>
+    </WishlistHero>
+
     <UAlert
       v-if="wishlist.isOwner"
       class="mt-6"

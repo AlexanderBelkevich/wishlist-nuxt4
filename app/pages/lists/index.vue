@@ -64,8 +64,22 @@ async function create() {
         v-for="wishlist in wishlists"
         :key="wishlist.id"
       >
-        <NuxtLink :to="`/lists/${wishlist.id}`">
-          <UCard class="transition hover:bg-elevated">{{ wishlist.title }}</UCard>
+        <NuxtLink
+          :to="`/lists/${wishlist.id}`"
+          class="flex items-center gap-4 rounded-xl bg-linear-to-br p-4 text-white transition hover:opacity-90"
+          :class="wishlistGradients[wishlist.color]"
+        >
+          <span class="text-3xl">
+            {{ wishlist.emoji }}
+          </span>
+          <div class="min-w-0">
+            <p class="font-semibold break-words">{{ wishlist.title }}</p>
+            <EventDate
+              v-if="wishlist.eventDate"
+              :date="wishlist.eventDate"
+              class="text-sm text-white/90"
+            />
+          </div>
         </NuxtLink>
       </li>
     </ul>

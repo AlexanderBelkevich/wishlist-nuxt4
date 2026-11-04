@@ -96,6 +96,22 @@ async function copyPublicLink(slug: string) {
     toast.add({ title: 'Не удалось скопировать ссылку', color: 'error' })
   }
 }
+
+const settingsOpen = ref(false)
+
+async function saveSettings(data: WishlistFormState) {
+  try {
+    await $fetch(apiUrl, { method: 'PATCH', body: data })
+    settingsOpen.value = false
+    await refresh()
+  }
+  catch (error) {
+    const message = (error as { data?: { message?: string } }).data?.message
+    toast.add({ title: message ?? 'Не удалось сохранить настройки', color: 'error' })
+  }
+}
+
+const heroButton = 'bg-white/20 text-white hover:bg-white/30 active:bg-white/30'
 </script>
 
 <template>
@@ -111,37 +127,45 @@ async function copyPublicLink(slug: string) {
       variant="link"
       class="mb-4 px-0"
     />
-    <h1 class="text-2xl font-semibold break-words mb-4">
-      {{ wishlist.title }}
-    </h1>
-    <div class="flex flex-wrap gap-2">
-      <UButton
-        icon="i-lucide-link"
-        label="Скопировать ссылку"
-        color="neutral"
-        variant="outline"
-        @click="copyPublicLink(wishlist.slug)"
-      />
-      <UButton
-        :to="`/w/${wishlist.slug}`"
-        target="_blank"
-        icon="i-lucide-eye"
-        color="neutral"
-        variant="outline"
-      />
-      <UButton
-        icon="i-lucide-plus"
-        label="Добавить подарок"
-        @click="openGiftForm()"
-      />
-      <UButton
-        icon="i-lucide-trash-2"
-        label="Удалить"
-        color="error"
-        variant="soft"
-        @click="deleteOpen = true"
-      />
-    </div>
+    <WishlistHero :wishlist="wishlist">
+      <div class="flex flex-wrap gap-2">
+        <UButton
+          icon="i-lucide-plus"
+          label="Добавить подарок"
+          class="bg-white text-neutral-900 hover:bg-white/90"
+          @click="openGiftForm()"
+        />
+        <UButton
+          icon="i-lucide-link"
+          label="Скопировать ссылку"
+          color="neutral"
+          variant="outline"
+          :class="heroButton"
+          @click="copyPublicLink(wishlist.slug)"
+        />
+        <UButton
+          :to="`/w/${wishlist.slug}`"
+          target="_blank"
+          icon="i-lucide-eye"
+          color="neutral"
+          :class="heroButton"
+          variant="outline"
+        />
+        <UButton
+          icon="i-lucide-settings"
+          :class="heroButton"
+          variant="ghost"
+          @click="settingsOpen = true"
+        />
+        <UButton
+          icon="i-lucide-trash-2"
+          color="error"
+          :class="heroButton"
+          variant="soft"
+          @click="deleteOpen = true"
+        />
+      </div>
+    </WishlistHero>
 
     <UEmpty
       v-if="!wishlist.gifts.length"
@@ -237,6 +261,18 @@ async function copyPublicLink(slug: string) {
           color="error"
           :loading="deleting"
           @click="deleteGift"
+        />
+      </template>
+    </UModal>
+
+    <UModal
+      v-model:open="settingsOpen"
+      title="Настройки вишлиста"
+    >
+      <template #body>
+        <WishlistForm
+          :wishlist="wishlist"
+          @submit="saveSettings"
         />
       </template>
     </UModal>

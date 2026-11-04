@@ -14,6 +14,9 @@ export default defineEventHandler(async (event) => {
     id: wishlist.id,
     title: wishlist.title,
     slug: wishlist.slug,
+    emoji: wishlist.emoji,
+    color: wishlist.color,
+    eventDate: wishlist.eventDate,
     gifts: gifts.map(({ reservationToken, ...gift }) => ({
       ...gift,
       reserved: reservationToken !== null,

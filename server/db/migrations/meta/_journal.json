@@ -29,6 +29,13 @@
       "when": 1793628776791,
       "tag": "0003_quick_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793721608758,
+      "tag": "0004_cuddly_night_thrasher",
+      "breakpoints": true
     }
   ]
 }

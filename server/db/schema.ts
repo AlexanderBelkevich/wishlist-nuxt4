@@ -1,4 +1,5 @@
 import { sqliteTable, integer, text, index } from 'drizzle-orm/sqlite-core'
+import { wishlistColors, wishlistEmojis } from '../../shared/utils/wishlist-theme'
 
 const createdAt = () => integer({ mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
 
@@ -20,6 +21,9 @@ export const wishlists = sqliteTable('wishlists', {
   userId: integer().notNull().references(() => users.id, { onDelete: 'cascade' }),
   title: text().notNull(),
   slug: text().notNull().unique(),
+  emoji: text({ enum: wishlistEmojis }).notNull().default('🎁'),
+  color: text({ enum: wishlistColors }).notNull().default('rose'),
+  eventDate: text(),
   createdAt: createdAt(),
 }, table => [
   index('wishlists_user_id_idx').on(table.userId),
