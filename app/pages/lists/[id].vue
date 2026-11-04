@@ -6,10 +6,11 @@ definePageMeta({
 
 const route = useRoute()
 const toast = useToast()
+const { $api } = useNuxtApp()
 
 const apiUrl = `/api/wishlists/${route.params.id}` as const
 
-const { data: wishlist, error, refresh } = await useFetch(apiUrl)
+const { data: wishlist, error, refresh } = await useApi(apiUrl)
 
 if (error.value) {
   throw createError({ statusCode: error.value.statusCode, message: 'Вишлист не найден', fatal: true })
@@ -23,12 +24,11 @@ const deleting = ref(false)
 async function deleteWishList() {
   deleting.value = true
   try {
-    await $fetch(apiUrl, { method: 'DELETE' })
+    await $api(apiUrl, { method: 'DELETE' })
     await navigateTo('/lists')
   }
-  catch (error) {
-    const message = (error as { data?: { message?: string } }).data?.message
-    toast.add({ title: message ?? 'Не удалось удалить вишлист', color: 'error' })
+  catch {
+    // Обработали в $api
   }
   finally {
     deleting.value = false
@@ -49,17 +49,16 @@ function openGiftForm(gift?: Gift) {
 async function saveGift(gift: GiftFormState) {
   try {
     if (editedGift.value) {
-      await $fetch(`${apiUrl}/gifts/${editedGift.value.id}`, { method: 'PATCH', body: gift })
+      await $api(`${apiUrl}/gifts/${editedGift.value.id}`, { method: 'PATCH', body: gift })
     }
     else {
-      await $fetch(`${apiUrl}/gifts`, { method: 'POST', body: gift })
+      await $api(`${apiUrl}/gifts`, { method: 'POST', body: gift })
     }
     giftFormOpen.value = false
     await refresh()
   }
-  catch (error) {
-    const message = (error as { data?: { message?: string } }).data?.message
-    toast.add({ title: message ?? 'Не удалось сохранить подарок', color: 'error' })
+  catch {
+    // Обработали в $api
   }
 }
 
@@ -74,12 +73,11 @@ async function deleteGift() {
   if (!giftToDelete.value) return
   deleting.value = true
   try {
-    await $fetch(`${apiUrl}/gifts/${giftToDelete.value.id}`, { method: 'DELETE' })
+    await $api(`${apiUrl}/gifts/${giftToDelete.value.id}`, { method: 'DELETE' })
     await refresh()
   }
-  catch (error) {
-    const message = (error as { data?: { message?: string } }).data?.message
-    toast.add({ title: message ?? 'Не удалось удалить подарок', color: 'error' })
+  catch {
+    // Обработали в $api
   }
   finally {
     deleting.value = false
@@ -101,13 +99,12 @@ const settingsOpen = ref(false)
 
 async function saveSettings(data: WishlistFormState) {
   try {
-    await $fetch(apiUrl, { method: 'PATCH', body: data })
+    await $api(apiUrl, { method: 'PATCH', body: data })
     settingsOpen.value = false
     await refresh()
   }
-  catch (error) {
-    const message = (error as { data?: { message?: string } }).data?.message
-    toast.add({ title: message ?? 'Не удалось сохранить настройки', color: 'error' })
+  catch {
+    // Обработали в $api
   }
 }
 

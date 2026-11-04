@@ -3,18 +3,17 @@ definePageMeta({ middleware: 'auth' })
 useSeoMeta({ title: 'Мои вишлисты' })
 
 const { user } = useUserSession()
-const toast = useToast()
-const { data: wishlists } = await useFetch('/api/wishlists')
+const { data: wishlists, status } = useApi('/api/wishlists', { lazy: true })
+const { $api } = useNuxtApp()
 
 const state = reactive({ title: '' })
 async function create() {
   try {
-    const wishlist = await $fetch('/api/wishlists', { method: 'POST', body: state })
+    const wishlist = await $api('/api/wishlists', { method: 'POST', body: state })
     await navigateTo(`/lists/${wishlist.id}`)
   }
-  catch (error) {
-    const message = (error as { data?: { message?: string } }).data?.message
-    toast.add({ title: message ?? 'Не удалось создать вишлист', color: 'error' })
+  catch {
+    // Обработали в $api
   }
 }
 </script>
@@ -49,6 +48,16 @@ async function create() {
         label="Создать"
       />
     </UForm>
+    <div
+      v-if="status === 'pending' && !wishlists"
+      class="mt-6 space-y-2"
+    >
+      <USkeleton
+        v-for="n in 3"
+        :key="n"
+        class="h-20 rounded-xl"
+      />
+    </div>
     <UEmpty
       v-if="!wishlists?.length"
       class="mt-8"

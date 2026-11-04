@@ -2,12 +2,12 @@
 definePageMeta({ layout: 'guest' })
 
 const route = useRoute()
-const toast = useToast()
 const config = useRuntimeConfig()
+const { $api } = useNuxtApp()
 
 const apiUrl = `/api/guest/${route.params.slug}` as const
 
-const { data: wishlist, error, refresh } = await useFetch(apiUrl)
+const { data: wishlist, error, refresh } = await useApi(apiUrl)
 
 if (error.value) {
   throw createError({ statusCode: error.value.statusCode, message: 'Вишлист не найден', fatal: true })
@@ -25,11 +25,10 @@ useSeoMeta({
 
 async function toggleReservation(giftId: number, method: 'POST' | 'DELETE') {
   try {
-    await $fetch(`${apiUrl}/gifts/${giftId}/reservation`, { method })
+    await $api(`${apiUrl}/gifts/${giftId}/reservation`, { method })
   }
-  catch (error) {
-    const message = (error as { data?: { message?: string } }).data?.message
-    toast.add({ title: message ?? 'Не получилось', color: 'error' })
+  catch {
+    // Обработали в $api
   }
   await refresh()
 }
