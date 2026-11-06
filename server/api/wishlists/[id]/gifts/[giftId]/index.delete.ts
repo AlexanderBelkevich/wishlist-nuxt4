@@ -1,16 +1,12 @@
-import { and, eq } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   const wishlist = await requireOwnWishlist(event)
-  const giftId = getIdParam(event, 'giftId')
+  const gift = await requireGift(event, wishlist.id)
 
-  const deleted = await db
+  await db
     .delete(tables.gifts)
-    .where(and(eq(tables.gifts.id, giftId), eq(tables.gifts.wishlistId, wishlist.id)))
-    .returning({ id: tables.gifts.id })
-    .get()
+    .where(eq(tables.gifts.id, gift.id))
 
-  if (!deleted) {
-    throw createError({ statusCode: 404, message: 'Подарок не найден' })
-  }
+  await deleteGiftImage(gift.imageId)
 })

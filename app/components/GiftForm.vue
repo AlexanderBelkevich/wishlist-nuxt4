@@ -4,7 +4,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  submit: [gift: GiftFormState]
+  submit: [result: GiftFormResult]
 }>()
 
 const state = reactive<GiftFormState>({
@@ -24,8 +24,22 @@ function onPriceInput(event: Event) {
   state.price = digits ? Number(digits) : null
 }
 
+const image = ref<File | null>(null)
+const removeImage = ref(false)
+const currentImage = computed(() => {
+  return props.gift?.imageId && !removeImage.value ? `/images/${props.gift.imageId}.webp` : null
+})
+
+const imageError = computed(() => {
+  if (!image.value) return undefined
+  if (!IMAGE_TYPES.includes(image.value.type)) return 'Нужна картинка в формате JPEG, PNG или WebP'
+  if (image.value.size > MAX_IMAGE_SIZE) return 'Файл больше 5 Мб'
+  return undefined
+})
+
 function onSubmit() {
-  emit('submit', { ...state })
+  if (imageError.value) return
+  emit('submit', { gift: { ...state }, image: image.value, removeImage: removeImage.value })
 }
 </script>
 
@@ -55,6 +69,36 @@ function onSubmit() {
         v-model="state.url"
         type="url"
         placeholder="https://..."
+        class="w-full"
+      />
+    </UFormField>
+    <UFormField
+      label="Фото"
+      :error="imageError"
+      help="Скриншот товара из магазина или свое фото, до 5 Мб"
+    >
+      <div
+        v-if="currentImage"
+        class="flex items-center gap-3"
+      >
+        <img
+          :src="currentImage"
+          alt=""
+          class="size-16 rounded-lg object-cover"
+        >
+        <UButton
+          label="Убрать фото"
+          color="neutral"
+          variant="outline"
+          size="sm"
+          @click="removeImage = true"
+        />
+      </div>
+      <UFileUpload
+        v-else
+        v-model="image"
+        :accept="IMAGE_TYPES.join(',')"
+        label="Выберите или перетащите картинку"
         class="w-full"
       />
     </UFormField>

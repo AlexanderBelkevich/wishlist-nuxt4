@@ -48,19 +48,32 @@ function openGiftForm(gift?: Gift) {
   giftFormOpen.value = true
 }
 
-async function saveGift(gift: GiftFormState) {
+async function saveGift({ gift, image, removeImage }: GiftFormResult) {
   try {
+    let giftId: number
     if (editedGift.value) {
-      await $api(`${apiUrl}/gifts/${editedGift.value.id}`, { method: 'PATCH', body: gift })
+      giftId = editedGift.value.id
+      await $api(`${apiUrl}/gifts/${giftId}`, { method: 'PATCH', body: gift })
     }
     else {
-      await $api(`${apiUrl}/gifts`, { method: 'POST', body: gift })
+      giftId = (await $api(`${apiUrl}/gifts`, { method: 'POST', body: gift })).id
     }
+
+    if (image) {
+      const body = new FormData()
+      body.append('image', image)
+      await $api(`${apiUrl}/gifts/${giftId}/image`, { method: 'PUT', body })
+    }
+    else if (removeImage) {
+      await $api(`${apiUrl}/gifts/${giftId}/image`, { method: 'DELETE' })
+    }
+
     giftFormOpen.value = false
     await refresh()
   }
   catch {
     // Обработали в $api
+    await refresh()
   }
 }
 

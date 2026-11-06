@@ -12,5 +12,10 @@ export default defineEventHandler(async (event) => {
 
   const lastPosition = last?.position ?? -1
 
-  await db.insert(tables.gifts).values({ ...gift, wishlistId: wishlist.id, position: lastPosition + 1 })
+  const created = await db
+    .insert(tables.gifts)
+    .values({ ...gift, wishlistId: wishlist.id, position: lastPosition + 1 })
+    .returning({ id: tables.gifts.id })
+    .get()
+  return created
 })

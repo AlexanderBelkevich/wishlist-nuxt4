@@ -10,8 +10,27 @@ const store = computed(() => props.gift.url ? new URL(props.gift.url).hostname.r
 <template>
   <UCard
     class="h-full"
-    :ui="{ root: 'flex flex-col', body: 'flex flex-1 flex-col gap-2' }"
+    :ui="{ root: 'flex flex-col overflow-hidden', header: 'p-0 sm:p-0', body: 'flex flex-1 flex-col gap-2' }"
   >
+    <template #header>
+      <img
+        v-if="gift.imageId"
+        :src="`/images/${gift.imageId}.webp`"
+        :alt="gift.title"
+        loading="lazy"
+        class="block aspect-4/3 w-full object-cover"
+      >
+      <div
+        v-else
+        class="flex aspect-4/3 w-full items-center justify-center bg-elevated"
+      >
+        <img
+          src="/gift-placeholder.svg"
+          alt=""
+          class="size-16"
+        >
+      </div>
+    </template>
     <p class="font-medium break-words">
       {{ gift.title }}
     </p>
