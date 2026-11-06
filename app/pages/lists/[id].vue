@@ -139,6 +139,32 @@ async function saveOrder(event: { oldIndex?: number, newIndex?: number }) {
     await refresh()
   }
 }
+
+const canShare = ref(false)
+onMounted(() => {
+  canShare.value = 'share' in navigator
+})
+
+async function share() {
+  if (!wishlist.value) return
+  try {
+    await navigator.share({
+      title: wishlist.value.title,
+      url: `${location.origin}/w/${wishlist.value.slug}`,
+    })
+  }
+  catch {
+    // Пользователь закрыл меню, не выбрав приложение. Это не ошибка
+  }
+}
+
+const shareHintHidden = useCookie<boolean>(
+  'share-hint-hidden', {
+    default: () => false,
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+  },
+)
 </script>
 
 <template>
@@ -171,6 +197,13 @@ async function saveOrder(event: { oldIndex?: number, newIndex?: number }) {
           @click="copyPublicLink(wishlist.slug)"
         />
         <UButton
+          v-if="canShare"
+          icon="i-lucide-share-2"
+          variant="ghost"
+          :class="heroButton"
+          @click="share"
+        />
+        <UButton
           :to="`/w/${wishlist.slug}`"
           target="_blank"
           icon="i-lucide-eye"
@@ -193,6 +226,18 @@ async function saveOrder(event: { oldIndex?: number, newIndex?: number }) {
         />
       </div>
     </WishlistHero>
+
+    <UAlert
+      v-if="wishlist.gifts.length && !shareHintHidden"
+      class="mt-6"
+      icon="i-lucide-send"
+      title="Отправьте ссылку друзьям"
+      description="Они увидят подарки и смогут забронировать их без регистрации. Кто что выбрал, вы не узнаете"
+      color="primary"
+      variant="subtle"
+      close
+      @update:open="shareHintHidden = true"
+    />
 
     <UEmpty
       v-if="!wishlist.gifts.length"
