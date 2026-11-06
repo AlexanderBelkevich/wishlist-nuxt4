@@ -3,6 +3,7 @@ export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/ui', 'nuxt-auth-utils'],
   devtools: { enabled: true },
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       htmlAttrs: { lang: 'ru' },
       link: [{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],

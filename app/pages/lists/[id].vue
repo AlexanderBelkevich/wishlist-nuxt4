@@ -233,7 +233,7 @@ const heroButton = 'bg-white/20 text-white hover:bg-white/30 active:bg-white/30'
       :title="editedGift ? 'Изменить подарок' : 'Новый подарок'"
     >
       <template #body>
-        <GiftForm
+        <LazyGiftForm
           :gift="editedGift"
           @submit="saveGift"
         />
@@ -267,7 +267,7 @@ const heroButton = 'bg-white/20 text-white hover:bg-white/30 active:bg-white/30'
       title="Настройки вишлиста"
     >
       <template #body>
-        <WishlistForm
+        <LazyWishlistForm
           :wishlist="wishlist"
           @submit="saveSettings"
         />
