@@ -27,5 +27,12 @@ export const giftSchema = z.object({
     .transform(value => value || null),
 })
 
+export const giftsOrderSchema = z.object({
+  ids: z
+    .array(z.number().int().positive())
+    .max(500)
+    .refine(ids => new Set(ids).size === ids.length, 'Подарки в списке повторяются'),
+})
+
 export type WishlistFormState = z.input<typeof wishlistSchema>
 export type GiftFormState = z.input<typeof giftSchema>

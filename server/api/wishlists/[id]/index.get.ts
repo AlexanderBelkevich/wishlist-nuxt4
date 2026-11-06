@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     .select(giftColumns)
     .from(tables.gifts)
     .where(eq(tables.gifts.wishlistId, wishlist.id))
-    .orderBy(asc(tables.gifts.id))
+    .orderBy(asc(tables.gifts.position), asc(tables.gifts.id))
 
   return {
     id: wishlist.id,

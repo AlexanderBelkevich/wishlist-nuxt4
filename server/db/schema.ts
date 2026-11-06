@@ -40,6 +40,7 @@ export const gifts = sqliteTable('gifts', {
   note: text(),
   reservationToken: text(),
   createdAt: createdAt(),
+  position: integer().notNull().default(0),
 }, table => [
   index('gidts_wishlist_id_idx').on(table.wishlistId),
 ])

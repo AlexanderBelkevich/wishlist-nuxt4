@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { VueDraggable } from 'vue-draggable-plus'
+
 definePageMeta({
   middleware: 'auth',
   validate: route => /^\d+$/.test(String(route.params.id)),
@@ -10,7 +12,7 @@ const { $api } = useNuxtApp()
 
 const apiUrl = `/api/wishlists/${route.params.id}` as const
 
-const { data: wishlist, error, refresh } = await useApi(apiUrl)
+const { data: wishlist, error, refresh } = await useApi(apiUrl, { deep: true })
 
 if (error.value) {
   throw createError({ statusCode: error.value.statusCode, message: 'Вишлист не найден', fatal: true })
@@ -109,6 +111,21 @@ async function saveSettings(data: WishlistFormState) {
 }
 
 const heroButton = 'bg-white/20 text-white hover:bg-white/30 active:bg-white/30'
+
+async function saveOrder(event: { oldIndex?: number, newIndex?: number }) {
+  if (event.oldIndex === event.newIndex || !wishlist.value) return
+  try {
+    await $api(`${apiUrl}/gifts/order`, {
+      method: 'PUT',
+      body: {
+        ids: wishlist.value.gifts.map(gift => gift.id),
+      },
+    })
+  }
+  catch {
+    await refresh()
+  }
+}
 </script>
 
 <template>
@@ -172,9 +189,14 @@ const heroButton = 'bg-white/20 text-white hover:bg-white/30 active:bg-white/30'
       description="Добавьте первый подарок"
     />
 
-    <ul
+    <VueDraggable
       v-else
+      v-model="wishlist.gifts"
+      tag="ul"
+      handle=".drag-handle"
+      :animation="150"
       class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      @end="saveOrder"
     >
       <li
         v-for="gift in wishlist.gifts"
@@ -182,6 +204,10 @@ const heroButton = 'bg-white/20 text-white hover:bg-white/30 active:bg-white/30'
       >
         <GiftCard :gift="gift">
           <template #actions>
+            <UIcon
+              name="i-lucide-grip-vertical"
+              class="drag-handle size-5 shring-0 cursor-grab touch-none text-muted"
+            />
             <UBadge
               v-if="gift.reserved"
               label="Забронирован"
@@ -204,7 +230,7 @@ const heroButton = 'bg-white/20 text-white hover:bg-white/30 active:bg-white/30'
           </template>
         </GiftCard>
       </li>
-    </ul>
+    </VueDraggable>
 
     <UModal
       v-model:open="deleteOpen"
