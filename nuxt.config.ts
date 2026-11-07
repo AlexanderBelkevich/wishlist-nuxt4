@@ -21,6 +21,15 @@ export default defineNuxtConfig({
       siteUrl: 'http://localhost:3000',
     },
   },
+  routeRules: {
+    '/**': {
+      headers: {
+        'X-Frame-Options': 'DENY',
+        'X-Content-Type-Options': 'nosniff',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+      },
+    },
+  },
   compatibilityDate: '2025-07-15',
   eslint: {
     config: { stylistic: true },
