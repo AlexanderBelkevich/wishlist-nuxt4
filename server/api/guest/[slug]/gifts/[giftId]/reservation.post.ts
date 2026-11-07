@@ -25,4 +25,6 @@ export default defineEventHandler(async (event) => {
   if (!reserved) {
     throw createError({ statusCode: 409, message: 'Подарок уже забронировали или удалили' })
   }
+
+  notifyWishlistChanged(wishlist.id)
 })

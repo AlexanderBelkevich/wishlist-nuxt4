@@ -20,4 +20,5 @@ export default defineEventHandler(async (event) => {
       await tx.update(tables.gifts).set({ position }).where(eq(tables.gifts.id, id))
     }
   })
+  notifyWishlistChanged(wishlist.id)
 })

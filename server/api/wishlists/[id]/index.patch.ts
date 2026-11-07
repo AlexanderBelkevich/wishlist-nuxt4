@@ -8,4 +8,6 @@ export default defineEventHandler(async (event) => {
     .update(tables.wishlists)
     .set(data)
     .where(eq(tables.wishlists.id, wishlist.id))
+
+  notifyWishlistChanged(wishlist.id)
 })

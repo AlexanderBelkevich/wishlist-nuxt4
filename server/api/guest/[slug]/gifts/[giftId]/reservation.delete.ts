@@ -24,4 +24,6 @@ export default defineEventHandler(async (event) => {
   if (!cancelled) {
     throw createError({ statusCode: 404, message: 'Бронь не найдена' })
   }
+
+  notifyWishlistChanged(wishlist.id)
 })

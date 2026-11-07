@@ -6,4 +6,6 @@ export default defineEventHandler(async (event) => {
 
   await db.update(tables.gifts).set({ imageId: null }).where(eq(tables.gifts.id, gift.id))
   await deleteGiftImage(gift.imageId)
+
+  notifyWishlistChanged(wishlist.id)
 })

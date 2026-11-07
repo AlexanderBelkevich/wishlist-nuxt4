@@ -9,4 +9,6 @@ export default defineEventHandler(async (event) => {
     .where(eq(tables.gifts.id, gift.id))
 
   await deleteGiftImage(gift.imageId)
+
+  notifyWishlistChanged(wishlist.id)
 })

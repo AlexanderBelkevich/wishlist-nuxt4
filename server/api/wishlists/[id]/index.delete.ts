@@ -13,4 +13,6 @@ export default defineEventHandler(async (event) => {
   for (const { imageId } of images) {
     await deleteGiftImage(imageId)
   }
+
+  notifyWishlistChanged(wishlist.id)
 })

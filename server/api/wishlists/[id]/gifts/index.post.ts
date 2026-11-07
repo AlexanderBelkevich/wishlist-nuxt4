@@ -17,5 +17,7 @@ export default defineEventHandler(async (event) => {
     .values({ ...gift, wishlistId: wishlist.id, position: lastPosition + 1 })
     .returning({ id: tables.gifts.id })
     .get()
+
+  notifyWishlistChanged(wishlist.id)
   return created
 })

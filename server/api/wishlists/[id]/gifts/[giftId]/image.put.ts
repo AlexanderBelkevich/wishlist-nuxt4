@@ -18,4 +18,6 @@ export default defineEventHandler(async (event) => {
   const imageId = await saveGiftImage(file.data)
   await db.update(tables.gifts).set({ imageId }).where(eq(tables.gifts.id, gift.id))
   await deleteGiftImage(gift.imageId)
+
+  notifyWishlistChanged(wishlist.id)
 })

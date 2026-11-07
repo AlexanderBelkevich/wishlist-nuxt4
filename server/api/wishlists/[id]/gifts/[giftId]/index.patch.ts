@@ -15,4 +15,6 @@ export default defineEventHandler(async (event) => {
   if (!updated) {
     throw createError({ statusCode: 404, message: 'Подарок не найден' })
   }
+
+  notifyWishlistChanged(wishlist.id)
 })

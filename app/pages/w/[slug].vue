@@ -13,6 +13,14 @@ const { data: wishlist, error, refresh } = await useApi(apiUrl, { deep: true })
 
 type Gift = NonNullable<typeof wishlist.value>['gifts'][number]
 
+useLiveUpdates(`${apiUrl}/events`, async () => {
+  await refresh()
+
+  if (error.value) {
+    showError({ statusCode: 404, message: 'Вишлист удалили' })
+  }
+})
+
 if (error.value) {
   throw createError({ statusCode: error.value.statusCode, message: 'Вишлист не найден', fatal: true })
 }

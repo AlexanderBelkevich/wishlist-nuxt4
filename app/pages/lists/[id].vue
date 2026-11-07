@@ -40,6 +40,8 @@ async function deleteWishList() {
 
 type Gift = NonNullable<typeof wishlist.value>['gifts'][number]
 
+useLiveUpdates(`/api/guest/${wishlist.value!.slug}/events`, () => refresh())
+
 const giftFormOpen = ref(false)
 const editedGift = ref<Gift>()
 
